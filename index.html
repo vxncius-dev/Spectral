@@ -8,99 +8,104 @@
 	<title>Spectral</title>
 	<link rel="icon" href="https://cdn-icons-png.flaticon.com/128/616/616486.png" type="image/x-icon">
 	<style>
-		@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap");
 
-  html {
-  	color-scheme: dark;
-  }
-  
-  * {
-  	font-family: "Instrument Serif", Georgia, serif;
-  	font-weight: 400;
-  	font-style: normal;
-  	padding: 0;
-  	margin: 0;
-  	box-sizing: border-box;
-  	text-decoration: none;
-  	list-style: none;
-  	background: none;
-  	border: none;
-  	outline: none;
-  	color: white;
-  	transition: 0.4s ease;
-  }
-  
-  ::selection {
-  	background: #222;
-  }
-  
-  body {
-  	display: grid;
-  	place-content: center;
-  	min-width: 380px;
-  	width: 100vw;
-  	height: 100vh;
-  	overflow: hidden;
-  	background: url("https://image.pollinations.ai/prompt/cinematic-dream-fog-with-flowers-21k6yfdi?width=1536&height=864&model=flux&nologo=true&seed=87497892")
-  		no-repeat center/cover;
-  
-  	#downloadButton {
-  		position: absolute;
-  		right: 0;
-  		top: 0;
-  		margin: 10px;
-  		cursor: pointer;
-  
-  		svg {
-  			width: 22px;
-  		}
-  	}
-  
-  	.container {
-  		text-align: center;
-  		margin-top: 55vh;
-  		display: flex;
-  		align-items: center;
-  		flex-direction: column;
-  		gap: 10px;
-  		max-width: 700px;
-  		padding-inline: 40px;
-  
-  		h1 {
-  			font-style: italic;
-  			font-size: 2.4em;
-  			line-height: 1em;
-  		}
-  
-  		h1,
-  		h2 {
-  			user-select: none;
-  			cursor: default;
-  		}
-  
-  		#prompt {
-  			padding-inline: 20px;
-  			max-width: 700px;
-  			max-height: 250px;
-  			width: 100vw;
-  			text-align: center;
-  			font-size: 1.4em;
-  		}
-  
-  		::placeholder {
-  			color: white;
-  		}
-  	}
-  
-  	small {
-  		font-size: 1em;
-  	}
-  
-  	#downloadButton:hover ~ * {
-  		opacity: 0;
-  	}
-  }
-  
+html {
+	color-scheme: dark;
+}
+
+* {
+	font-family: "Instrument Serif", Georgia, serif;
+	font-weight: 400;
+	font-style: normal;
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+	text-decoration: none;
+	list-style: none;
+	background: none;
+	border: none;
+	outline: none;
+	color: white;
+	transition: 0.4s ease;
+}
+
+::selection {
+	background: #222;
+}
+
+::-webkit-scrollbar {
+	display: none;
+}
+
+body {
+	display: grid;
+	place-content: center;
+	min-width: 380px;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+	background: url("https://image.pollinations.ai/prompt/cinematic-dream-fog-with-flowers-21k6yfdi?width=1536&height=864&model=flux&nologo=true&seed=87497892")
+		no-repeat center/cover;
+
+	#downloadButton {
+		position: absolute;
+		right: 0;
+		top: 0;
+		margin: 10px;
+		cursor: pointer;
+
+		svg {
+			width: 22px;
+		}
+	}
+
+	.container {
+		text-align: center;
+		margin-top: 55vh;
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		gap: 10px;
+		max-width: 700px;
+		padding-inline: 40px;
+
+		h1 {
+			font-style: italic;
+			font-size: 2.4em;
+			line-height: 1em;
+		}
+
+		h1,
+		h2 {
+			user-select: none;
+			cursor: default;
+		}
+
+		#prompt {
+			padding-inline: 20px;
+			max-width: 700px;
+			width: 100vw;
+			text-align: center;
+			font-size: 1.4em;
+			resize: none;
+			line-height: 1.5em;
+			max-height: 6em;
+		}
+
+		::placeholder {
+			color: white;
+		}
+	}
+
+	small {
+		font-size: 1em;
+	}
+
+	#downloadButton:hover ~ * {
+		opacity: 0;
+	}
+}
 	</style>
 </head>
 <body>
@@ -113,7 +118,7 @@
 		<h1>spectral</h1>
 		<h2>&#47;prompt</h2>
 	</div>
-	<input type="text" name="promptArea" id="prompt" spellcheck="false" placeholder='write your prompt here and press "Enter"' tabindex="1" maxlength="500" value="cinematic dream fog with flowers" title="Let your imagination float">
+	<textarea name="promptArea" id="prompt" spellcheck="false" placeholder='write your prompt here and press "Enter"' tabindex="1" maxlength="500" rows="1" title="Let your imagination float">cinematic dream fog with flowers</textarea>
 	<small>designed & coded by <a href="https://github.com/vxncius-dev" target="_blank" rel="noopener noreferrer" title="I have other really cool projects here">vxncius</a></small>
 </div>
 </body>
@@ -132,6 +137,7 @@ async function generateImage(prompt__) {
 	)}-${id}?width=${windowWidth}&height=${windowHeight}&model=flux&nologo=true&seed=${seed}`;
 	try {
 		const res = await fetch(apiUrl);
+		console.log(res);
 		if (!res.ok) throw new Error("Failed to generate image");
 		document.body.style.background = `url("${res.url}") no-repeat center/cover`;
 		isGenerating = false;
@@ -155,6 +161,20 @@ promptarea.addEventListener("keyup", async (e) => {
 		await generateImage(prompt__);
 		promptarea.focus();
 	}
+});
+
+promptarea.setAttribute("rows", "1");
+promptarea.style.overflowY = "hidden";
+promptarea.style.resize = "none";
+
+promptarea.addEventListener("input", () => {
+	promptarea.style.height = "auto";
+	const lineHeight = parseInt(
+		window.getComputedStyle(promptarea).lineHeight,
+		10
+	);
+	const maxHeight = lineHeight * 4;
+	promptarea.style.height = Math.min(promptarea.scrollHeight, maxHeight) + "px";
 });
 
 promptarea.addEventListener("focus", (e) => {
