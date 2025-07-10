@@ -178,8 +178,6 @@
 		const lineHeight = parseInt(window.getComputedStyle(promptarea).lineHeight, 5);
 		const maxHeight = lineHeight * 4;
 		promptarea.style.height = Math.min(promptarea.scrollHeight, maxHeight) + "px";
-		let prompt_ = promptarea.value.trim().replace(/\n/g, " ");
-		promptarea.value = prompt_;
 	});
 	
 	promptarea.addEventListener("focus", (e) => {
