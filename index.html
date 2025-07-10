@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Spectral – A minimalist AI image generator using the Pollinations API. Type a prompt and get instant visuals.">
+	<meta name="author" content="vxncius">
+	<title>Spectral</title>
+	<link rel="icon" href="https://cdn-icons-png.flaticon.com/128/616/616486.png" type="image/x-icon">
+	<style>
+		@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap");
+
+  html {
+  	color-scheme: dark;
+  }
+  
+  * {
+  	font-family: "Instrument Serif", Georgia, serif;
+  	font-weight: 400;
+  	font-style: normal;
+  	padding: 0;
+  	margin: 0;
+  	box-sizing: border-box;
+  	text-decoration: none;
+  	list-style: none;
+  	background: none;
+  	border: none;
+  	outline: none;
+  	color: white;
+  	transition: 0.4s ease;
+  }
+  
+  ::selection {
+  	background: #222;
+  }
+  
+  body {
+  	display: grid;
+  	place-content: center;
+  	min-width: 380px;
+  	width: 100vw;
+  	height: 100vh;
+  	overflow: hidden;
+  	background: url("https://image.pollinations.ai/prompt/cinematic-dream-fog-with-flowers-21k6yfdi?width=1536&height=864&model=flux&nologo=true&seed=87497892")
+  		no-repeat center/cover;
+  
+  	#downloadButton {
+  		position: absolute;
+  		right: 0;
+  		top: 0;
+  		margin: 10px;
+  		cursor: pointer;
+  
+  		svg {
+  			width: 22px;
+  		}
+  	}
+  
+  	.container {
+  		text-align: center;
+  		margin-top: 55vh;
+  		display: flex;
+  		align-items: center;
+  		flex-direction: column;
+  		gap: 10px;
+  		max-width: 700px;
+  		padding-inline: 40px;
+  
+  		h1 {
+  			font-style: italic;
+  			font-size: 2.4em;
+  			line-height: 1em;
+  		}
+  
+  		h1,
+  		h2 {
+  			user-select: none;
+  			cursor: default;
+  		}
+  
+  		#prompt {
+  			padding-inline: 20px;
+  			max-width: 700px;
+  			max-height: 250px;
+  			width: 100vw;
+  			text-align: center;
+  			font-size: 1.4em;
+  		}
+  
+  		::placeholder {
+  			color: white;
+  		}
+  	}
+  
+  	small {
+  		font-size: 1em;
+  	}
+  
+  	#downloadButton:hover ~ * {
+  		opacity: 0;
+  	}
+  }
+  
+	</style>
+</head>
+<body>
+<div class="container">
+	<button type="button" id="downloadButton" aria-label="Download image" title="Download image"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+			<path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+		</svg>
+	</button>
+	<div>
+		<h1>spectral</h1>
+		<h2>&#47;prompt</h2>
+	</div>
+	<input type="text" name="promptArea" id="prompt" spellcheck="false" placeholder='write your prompt here and press "Enter"' tabindex="1" maxlength="500" value="cinematic dream fog with flowers" title="Let your imagination float">
+	<small>designed & coded by <a href="https://github.com/vxncius-dev" target="_blank" rel="noopener noreferrer" title="I have other really cool projects here">vxncius</a></small>
+</div>
+</body>
+  <script>
+    const promptarea = document.getElementById("prompt");
+const downloadButton = document.getElementById("downloadButton");
+let isGenerating = false;
+
+async function generateImage(prompt__) {
+	const windowWidth = window.innerWidth;
+	const windowHeight = window.innerHeight;
+	const id = Math.random().toString(36).substring(2, 10);
+	const seed = String(Math.floor(Math.random() * 1e8)).padStart(8, "0");
+	const apiUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(
+		prompt__
+	)}-${id}?width=${windowWidth}&height=${windowHeight}&model=flux&nologo=true&seed=${seed}`;
+	try {
+		const res = await fetch(apiUrl);
+		console.log(res);
+		if (!res.ok) throw new Error("Failed to generate image");
+		document.body.style.background = `url("${res.url}") no-repeat center/cover`;
+		isGenerating = false;
+	} catch (err) {
+		alert("Failed to generate image.");
+		console.error(err);
+	}
+}
+
+promptarea.addEventListener("keyup", async (e) => {
+	let prompt__ = promptarea.value
+		.trim()
+		.replace(/[.,;'"“”‘’\-]/g, "")
+		.replace(/\s+/g, "-");
+
+	if (e.key === "Enter") {
+		e.preventDefault();
+		if (isGenerating) return;
+		isGenerating = true;
+		promptarea.blur();
+		await generateImage(prompt__);
+		promptarea.focus();
+	}
+});
+
+promptarea.addEventListener("focus", (e) => {
+	e.preventDefault();
+	promptarea.setSelectionRange(promptarea.value.length, promptarea.value.length);
+});
+
+document.addEventListener("click", () => {
+	if (isGenerating) return;
+	promptarea.focus();
+});
+
+downloadButton.addEventListener("click", async () => {
+	const body = document.body,
+		style = window.getComputedStyle(body),
+		bg = style.getPropertyValue("background"),
+		match = bg.match(/url\(".*\/prompt\/([^?"]+)/),
+		imageUrlMatch = bg.match(/url\("(.+?)"\)/),
+		fileName = `${match[1]}.jpg`,
+		imageUrl = imageUrlMatch[1];
+	try {
+		const response = await fetch(imageUrl, { mode: "cors" }),
+			blob = await response.blob(),
+			blobUrl = URL.createObjectURL(blob),
+			link = document.createElement("a");
+		link.href = blobUrl;
+		link.download = fileName;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		URL.revokeObjectURL(blobUrl);
+	} catch (err) {
+		alert("Failed to download image.");
+		console.error(err);
+	}
+});
+  </script>
+</html>
