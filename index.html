@@ -132,7 +132,6 @@ async function generateImage(prompt__) {
 	)}-${id}?width=${windowWidth}&height=${windowHeight}&model=flux&nologo=true&seed=${seed}`;
 	try {
 		const res = await fetch(apiUrl);
-		console.log(res);
 		if (!res.ok) throw new Error("Failed to generate image");
 		document.body.style.background = `url("${res.url}") no-repeat center/cover`;
 		isGenerating = false;
